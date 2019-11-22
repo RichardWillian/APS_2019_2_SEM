@@ -9,42 +9,32 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  int _indexDicaSelecionada = 0;
-  String _dicaDia = "";
+  int _indexDicaSelecionada = 1;
+  String _dicaDia = "Economizar água é algo essencial";
 
-  //Sim, fiz gambiarra
-  void _getDicas(String valor) async {
-    var url = "";
+  void _getDicas(int valor) async {
 
-    if (valor == null)
-      url = "http://10.222.113.23:3000/api/dicas?idMensagem=$valor";
-    else {
-      valor == 1.toString() ? _indexDicaSelecionada++ : _indexDicaSelecionada--;
-      url =
-          "http://10.222.113.23:3000/api/dicas?idMensagem=$_indexDicaSelecionada";
-    }
+    var url =
+        "https://dicas-api-v1.herokuapp.com/api/dicas?idMensagem=$valor";
 
     http.Response response;
-    _dicaDia =
-        "um mamuentasdaskld laskldaskl daskd askldklasdas djasdj askldjskladjklasjdskadjklasd ads";
 
-    // response = await http.get(Uri.encodeFull(url),
-    //     headers: {"content-type": "application/json"});
+    response = await http.get(Uri.encodeFull(url),
+        headers: {"content-type": "application/json"});
 
-    // var resposta = json.decode(response.body);
+    var resposta = json.decode(response.body);
 
-    // _dicaDia = resposta["dica"];
-    // _selectedIndex = resposta["id"];
+    _dicaDia = resposta["dica"];
+    _indexDicaSelecionada = resposta["id"];
   }
 
   @override
   Widget build(BuildContext context) {
-    _getDicas(null);
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(50.0),
           child: AppBar(
-              backgroundColor: Colors.green,
+              backgroundColor: Colors.white,
               title: Image.asset(
                 "images/EcoDicas.png",
                 fit: BoxFit.cover,
@@ -72,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                       _dicaDia,
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          fontSize: 50.0,
+                          fontSize: 40.0,
                           color: Colors.black,
                           fontWeight: FontWeight.bold),
                     ),
@@ -84,7 +74,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.white,
         iconSize: 30,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -96,12 +86,14 @@ class _HomePageState extends State<HomePage> {
             title: Text('Próxima dica'),
           ),
         ],
-        selectedItemColor: Colors.white,
+        selectedItemColor: Colors.green,
         currentIndex: _selectedIndex,
         onTap: (int index) {
           setState(() {
+
+            index == 1 ? _indexDicaSelecionada++ : _indexDicaSelecionada--;
             _selectedIndex = index;
-            _getDicas(index.toString());
+            _getDicas(_indexDicaSelecionada);
           });
         },
       ),
